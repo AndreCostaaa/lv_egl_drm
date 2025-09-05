@@ -22,6 +22,13 @@ set(LVGL_TEMPLATE_PATH "${CMAKE_SOURCE_DIR}/lvgl/lv_conf_template.h")
 set(LV_CONF_DEFAULTS_PATH "${CMAKE_SOURCE_DIR}/lv_conf.defaults")
 set(GENERATE_SCRIPT_PATH "${CMAKE_SOURCE_DIR}/lvgl/scripts/generate_lv_conf.py")
 
+configure_file(${LVGL_TEMPLATE_PATH} ${CMAKE_BINARY_DIR}/lv_conf_template.h
+               COPYONLY)
+configure_file(${LV_CONF_DEFAULTS_PATH} ${CMAKE_BINARY_DIR}/lv_conf.defaults
+               COPYONLY)
+configure_file(${GENERATE_SCRIPT_PATH} ${CMAKE_BINARY_DIR}/generate_lv_conf.py
+               COPYONLY)
+
 message(STATUS "Generating lv_conf.h from defaults")
 execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${LV_BUILD_CONF_PATH}
                 RESULT_VARIABLE touch_result)
