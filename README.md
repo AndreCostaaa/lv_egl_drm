@@ -74,7 +74,7 @@ Finally, source it using `source path/to/bash/script.sh` before building the app
 
 ```bash
 # Inside lv_egl_drm with the SDK env variables sourced
-cmake -B build
+cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build -j$(nproc)
 ```
 
