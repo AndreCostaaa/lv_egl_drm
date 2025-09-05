@@ -1,6 +1,8 @@
 #include <lvgl.h>
-#include <demos/lv_demo.h>
+#include <lv_demos.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(void)
 {
