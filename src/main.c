@@ -8,7 +8,7 @@ int main(void)
 	lv_init();
 
 	lv_display_t *disp = lv_linux_drm_create();
-	if (!disp == NULL) {
+	if (!disp) {
 		fprintf(stderr, "Failed to initialize drm\n");
 		return EXIT_FAILURE;
 	}
