@@ -12,6 +12,34 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -ggdb")
 
 find_package(PkgConfig REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+set(LV_BUILD_CONF_PATH
+    "${CMAKE_BINARY_DIR}/lv_conf.h"
+    CACHE PATH "path to lv_conf.h" FORCE)
+
+set(LVGL_TEMPLATE_PATH "${CMAKE_SOURCE_DIR}/lvgl/lv_conf_template.h")
+set(LV_CONF_DEFAULTS_PATH "${CMAKE_SOURCE_DIR}/lv_conf.defaults")
+set(GENERATE_SCRIPT_PATH "${CMAKE_SOURCE_DIR}/lvgl/scripts/generate_lv_conf.py")
+
+message(STATUS "Generating lv_conf.h from defaults")
+execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${LV_BUILD_CONF_PATH}
+                RESULT_VARIABLE touch_result)
+
+execute_process(
+  COMMAND
+    ${Python3_EXECUTABLE} ${GENERATE_SCRIPT_PATH} --template
+    ${LVGL_TEMPLATE_PATH} --defaults ${LV_CONF_DEFAULTS_PATH} --config
+    ${LV_BUILD_CONF_PATH}
+  RESULT_VARIABLE config_result
+  OUTPUT_VARIABLE config_output
+  ERROR_VARIABLE config_error)
+
+if(NOT config_result EQUAL 0)
+  message(FATAL_ERROR "Failed to generate lv_conf.h: ${config_error}")
+endif()
+
+message(STATUS "lv_conf.h generated successfully")
 
 set(CONFIG_LV_BUILD_EXAMPLES
     OFF
@@ -24,10 +52,7 @@ set(CONFIG_LV_USE_THORVG_INTERNAL
 set(CONFIG_LV_BUILD_DEMOS
     ON
     CACHE BOOL "enable lvgl demos" FORCE)
-
 add_subdirectory(lvgl)
-
-add_executable(demo src/main.c)
 
 pkg_check_modules(LIBDRM REQUIRED libdrm)
 pkg_check_modules(EGL REQUIRED egl)
@@ -36,7 +61,9 @@ pkg_check_modules(GBM REQUIRED gbm)
 
 target_include_directories(
   lvgl PUBLIC ${EGL_INCLUDE_DIRS} ${GLESV2_INCLUDE_DIRS} ${LIBDRM_INCLUDE_DIRS}
-              ${GBM_INCLUDE_DIRS})
+              ${GBM_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
+
+add_executable(demo src/main.c)
 target_link_libraries(
   demo
   PUBLIC lvgl
