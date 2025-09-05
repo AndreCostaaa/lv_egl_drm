@@ -41,7 +41,6 @@ target_link_libraries(
   demo
   PUBLIC lvgl
          lvgl_demos
-         lvgl_examples
          m
          ${EGL_LIBRARIES}
          ${GLESV2_LIBRARIES}
