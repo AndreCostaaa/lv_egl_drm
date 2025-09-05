@@ -70,9 +70,9 @@ target_include_directories(
   lvgl PUBLIC ${EGL_INCLUDE_DIRS} ${GLESV2_INCLUDE_DIRS} ${LIBDRM_INCLUDE_DIRS}
               ${GBM_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
 
-add_executable(demo src/main.c)
+add_executable(lv_egl_drm src/main.c)
 target_link_libraries(
-  demo
+  lv_egl_drm
   PUBLIC lvgl
          lvgl_demos
          m
@@ -81,5 +81,5 @@ target_link_libraries(
          ${LIBDRM_LIBRARIES}
          ${GBM_LIBRARIES})
 
-set_target_properties(demo PROPERTIES COMPILE_DEFINITIONS
-                                      "${LVGL_COMPILER_DEFINES}")
+set_target_properties(lv_egl_drm PROPERTIES COMPILE_DEFINITIONS
+                                            "${LVGL_COMPILER_DEFINES}")
