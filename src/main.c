@@ -20,7 +20,11 @@ int main(int argc, char **argv)
 	}
 	lv_linux_drm_set_file(disp, device, -1);
 
+#if LV_USE_DEMO_GLTF
+	lv_demo_gltf("A:../lv_gltf_viewer/gltfs/DiffuseTransmissionPlant.glb");
+#else
 	lv_demo_benchmark();
+#endif
 
 	while (1) {
 		uint32_t time_until_next = lv_timer_handler();
