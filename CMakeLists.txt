@@ -20,7 +20,7 @@ set(LV_BUILD_CONF_PATH
     CACHE PATH "path to lv_conf.h" FORCE)
 
 set(LVGL_TEMPLATE_PATH "${CMAKE_SOURCE_DIR}/lvgl/lv_conf_template.h")
-set(LV_CONF_DEFAULTS_PATH "${CMAKE_SOURCE_DIR}/lv_conf.defaults")
+set(LV_CONF_DEFAULTS_PATH "${CMAKE_SOURCE_DIR}/lv_conf_2d.defaults")
 set(GENERATE_SCRIPT_PATH "${CMAKE_SOURCE_DIR}/lvgl/scripts/generate_lv_conf.py")
 
 configure_file(${LVGL_TEMPLATE_PATH} ${CMAKE_BINARY_DIR}/lv_conf_template.h
