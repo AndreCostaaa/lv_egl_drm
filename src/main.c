@@ -4,10 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(void)
+int main(int argc, char **argv)
 {
-	const char *device = "/dev/dri/card0";
-	lv_init();
+	char *device = NULL;
+	if (argc < 2) {
+		device = "/dev/dri/card0";
+	} else {
+		device = argv[1];
+	}
 
 	lv_display_t *disp = lv_linux_drm_create();
 	if (!disp) {
