@@ -6,6 +6,7 @@
 
 int main(int argc, char **argv)
 {
+	lv_init();
 	char *device = NULL;
 	if (argc < 2) {
 		device = "/dev/dri/card0";
