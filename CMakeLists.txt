@@ -12,7 +12,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -ggdb")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -ggdb")
 
 find_package(PkgConfig REQUIRED)
-find_package(OpenGL REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 set(LV_BUILD_CONF_PATH
@@ -29,10 +28,6 @@ configure_file(${LV_CONF_DEFAULTS_PATH} ${CMAKE_BINARY_DIR}/lv_conf.defaults
                COPYONLY)
 configure_file(${GENERATE_SCRIPT_PATH} ${CMAKE_BINARY_DIR}/generate_lv_conf.py
                COPYONLY)
-
-message(STATUS "Generating lv_conf.h from defaults")
-execute_process(COMMAND ${CMAKE_COMMAND} -E touch ${LV_BUILD_CONF_PATH}
-                RESULT_VARIABLE touch_result)
 
 execute_process(
   COMMAND
@@ -124,24 +119,14 @@ if(CONFIG_LV_USE_GLTF)
 endif()
 
 pkg_check_modules(LIBDRM REQUIRED libdrm)
-pkg_check_modules(EGL REQUIRED egl)
-pkg_check_modules(GLESV2 REQUIRED glesv2)
 pkg_check_modules(GBM REQUIRED gbm)
 
-target_include_directories(
-  lvgl PUBLIC ${EGL_INCLUDE_DIRS} ${GLESV2_INCLUDE_DIRS} ${LIBDRM_INCLUDE_DIRS}
-              ${GBM_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
+target_include_directories(lvgl PUBLIC ${LIBDRM_INCLUDE_DIRS}
+                                       ${GBM_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
 
 add_executable(lv_egl_drm src/main.c)
-target_link_libraries(
-  lv_egl_drm
-  PUBLIC lvgl
-         lvgl_demos
-         m
-         ${EGL_LIBRARIES}
-         ${GLESV2_LIBRARIES}
-         ${LIBDRM_LIBRARIES}
-         ${GBM_LIBRARIES})
+target_link_libraries(lv_egl_drm PUBLIC lvgl lvgl_demos m ${LIBDRM_LIBRARIES}
+                                        ${GBM_LIBRARIES})
 
 set_target_properties(lv_egl_drm PROPERTIES COMPILE_DEFINITIONS
                                             "${LVGL_COMPILER_DEFINES}")
