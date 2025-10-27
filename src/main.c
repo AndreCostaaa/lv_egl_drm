@@ -4,6 +4,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if LV_USE_EVDEV
+
+static void set_mouse_cursor_icon(lv_indev_t * indev, lv_display_t * display)
+{
+    /* Set the cursor icon */
+    LV_IMAGE_DECLARE(mouse_cursor_icon);
+    lv_obj_t * cursor_obj = lv_image_create(lv_display_get_screen_active(display));
+    lv_image_set_src(cursor_obj, &mouse_cursor_icon);
+    lv_indev_set_cursor(indev, cursor_obj);
+}
+
+static void discovery_cb(lv_indev_t * indev, lv_evdev_type_t type, void * user_data)
+{
+    LV_LOG_USER("new '%s' device discovered", type == LV_EVDEV_TYPE_REL ? "REL" :
+                type == LV_EVDEV_TYPE_ABS ? "ABS" :
+                type == LV_EVDEV_TYPE_KEY ? "KEY" :
+                "unknown");
+
+    lv_display_t * disp = user_data;
+    lv_indev_set_display(indev, disp);
+
+    if(type == LV_EVDEV_TYPE_REL) {
+        set_mouse_cursor_icon(indev, disp);
+    }
+}
+#endif /*LV_USE_EVDEV*/
+
 static size_t drm_mode_select_cb(lv_display_t * disp, const lv_linux_drm_mode_t * modes, size_t mode_count)
 {
     LV_UNUSED(disp);
@@ -36,15 +63,21 @@ int main(void)
     char * device = lv_linux_drm_find_device_path();
     lv_linux_drm_set_mode_cb(disp, drm_mode_select_cb);
     lv_linux_drm_set_file(disp, device, -1);
+
+#if LV_USE_EVDEV
+    lv_evdev_discovery_start(discovery_cb, disp);
+#endif
+
     LV_LOG_USER("DRM init time %u", lv_tick_get() - start_tick);
 #if LV_USE_DEMO_GLTF
     uint32_t demo_tick = lv_tick_get();
-    lv_demo_gltf("A:neo_virtual_city_touchup1.glb");
+    lv_demo_gltf("A:phoenix_bird_animated.glb");
     uint32_t end = lv_tick_get();
     LV_LOG_USER("demo init time %u (%u)", end - demo_tick, end - start_tick);
 #else
     lv_demo_benchmark();
 #endif
+
 
     while(1) {
         uint32_t x = lv_timer_handler();

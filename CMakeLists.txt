@@ -118,15 +118,24 @@ if(CONFIG_LV_USE_GLTF)
   target_link_libraries(lvgl PUBLIC fastgltf webp)
 endif()
 
+if(CONFIG_LV_USE_EVDEV)
+  message(STATUS "Compiling with EVDEV support")
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(EVDEV REQUIRED libevdev)
+
+  target_link_libraries(lvgl PUBLIC ${EVDEV_LIBRARIES})
+  target_include_directories(lvgl PUBLIC ${EVDEV_INCLUDE_DIRS})
+endif()
+
 pkg_check_modules(LIBDRM REQUIRED libdrm)
 pkg_check_modules(GBM REQUIRED gbm)
 
-target_include_directories(lvgl PUBLIC ${LIBDRM_INCLUDE_DIRS}
-                                       ${GBM_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
+target_include_directories(
+  lvgl PUBLIC ${LIBDRM_INCLUDE_DIRS} ${GBM_INCLUDE_DIRS} ${CMAKE_BINARY_DIR} dl)
 
-add_executable(lv_egl_drm src/main.c)
+add_executable(lv_egl_drm src/main.c src/mouse_cursor_icon.c)
 target_link_libraries(lv_egl_drm PUBLIC lvgl lvgl_demos m ${LIBDRM_LIBRARIES}
-                                        ${GBM_LIBRARIES})
+                                        ${GBM_LIBRARIES} dl)
 
 set_target_properties(lv_egl_drm PROPERTIES COMPILE_DEFINITIONS
                                             "${LVGL_COMPILER_DEFINES}")
